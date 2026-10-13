@@ -210,7 +210,7 @@ function TitlesPanel({
   return (
     <Panel
       className="mt-4"
-      title={`${d.overview.titles} · ${all.length}`}
+      title={d.overview.titles}
       description={d.overview.topCount.replace("{n}", String(Math.min(60, all.length)))}
       isLoading={isLoading}
       error={error}
