@@ -20,7 +20,3 @@ pnpm dev                        # development server
 pnpm build && pnpm start        # production build + serve
 pnpm lint                       # eslint
 ```
-
-## UI
-
-Styling follows the [orkest-ui](https://github.com/wes383/orkest-ui) design system.
