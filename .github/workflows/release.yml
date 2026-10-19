@@ -1,0 +1,88 @@
+name: Release
+
+# Pushing a `v*` tag cuts a draft release with the NSIS installer attached. The
+# manual trigger exists so a failed release can be retried without deleting the tag.
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build (e.g. v0.1.0)"
+        required: true
+
+permissions:
+  contents: write
+
+# One release at a time; a re-push of the same tag supersedes the earlier run.
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    # `bundle.targets` is `["nsis"]`, so Windows is the only target that produces
+    # anything — add macos-latest / ubuntu-22.04 here once the config lists dmg/appimage.
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: pnpm/action-setup@v4
+        with:
+          # Falls back to the `packageManager` field in package.json.
+          run_install: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+
+      - uses: dtolnay/rust-toolchain@stable
+
+      # Compiling Tauri from scratch takes minutes; the cache is what makes repeat
+      # releases tolerable. Keyed on Cargo.lock by default.
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: src-tauri -> target
+
+      # The tag is the source of truth for the version, so the installer can never
+      # disagree with the release it came from.
+      - name: Sync version from tag
+        shell: bash
+        env:
+          TAG: ${{ inputs.tag || github.ref_name }}
+        run: |
+          version="${TAG#v}"
+          if ! [[ "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+ ]]; then
+            echo "::error::Tag '$TAG' is not vMAJOR.MINOR.PATCH"
+            exit 1
+          fi
+          export VERSION="$version"
+          node -e '
+            const fs = require("fs");
+            for (const file of ["package.json", "src-tauri/tauri.conf.json"]) {
+              const json = JSON.parse(fs.readFileSync(file, "utf8"));
+              json.version = process.env.VERSION;
+              fs.writeFileSync(file, JSON.stringify(json, null, 2) + "\n");
+            }
+          '
+          echo "Building $version"
+
+      - uses: tauri-apps/tauri-action@v0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tauriScript: pnpm tauri
+          tagName: ${{ inputs.tag || github.ref_name }}
+          releaseName: ActivityView ${{ inputs.tag || github.ref_name }}
+          releaseBody: |
+            Windows installer (NSIS). The binary is unsigned, so SmartScreen will warn
+            on first launch.
+
+            Requires ActivityWatch running locally.
+          # Draft, so the notes can be edited before it goes live.
+          releaseDraft: true
+          prerelease: false

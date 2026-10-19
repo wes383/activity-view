@@ -1,0 +1,509 @@
+@import "tailwindcss" source(none);
+
+@source "./**/*.{ts,tsx}";
+@source "../index.html";
+
+/* Orkest UI — design tokens, ported to Tailwind v4
+   Warm minimal aesthetic · Light / Dark / High Contrast */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Bundled rather than pulled from Google Fonts: the app is a desktop binary and has
+   to render correctly offline, and `font-src 'self'` in the CSP already allows it.
+   Latin subset only — CJK falls through to the system stack below. */
+@font-face {
+  font-family: "Plus Jakarta Sans";
+  font-style: normal;
+  font-weight: 500 800;
+  font-display: swap;
+  src: url("./assets/fonts/plus-jakarta-sans-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215,
+    U+FEFF, U+FFFD;
+}
+
+:root {
+  /* ── Surfaces ─────────────────────────────────────────────── */
+  --background: #fcfbfa;
+  --surface: #ffffff;
+  --sidebar: #fafaf9;
+  --muted: #f3f4f6;
+
+  /* ── Foreground (text) ───────────────────────────────────── */
+  --foreground: #25242a;
+  --foreground-muted: #6d6770;
+  --foreground-subtle: #9f99a3;
+  --foreground-faint: #b0a9b2;
+  --foreground-on-accent: #ffffff;
+
+  /* ── Borders ─────────────────────────────────────────────── */
+  --border: rgba(0, 0, 0, 0.08);
+  --border-strong: rgba(0, 0, 0, 0.22);
+  --ring: rgba(0, 0, 0, 0.22);
+
+  /* ── Hover states ────────────────────────────────────────── */
+  --hover-bg: rgba(0, 0, 0, 0.035);
+  --hover-bg-strong: rgba(0, 0, 0, 0.06);
+  --overlay: rgba(0, 0, 0, 0.18);
+
+  /* ── Accent ──────────────────────────────────────────────── */
+  --accent: #25242a;
+  --accent-hover: #000000;
+  --accent-fg: #ffffff;
+  --accent-muted: rgba(37, 36, 42, 0.08);
+
+  /* ── Semantic colors ─────────────────────────────────────── */
+  --blue: #2563eb;
+  --blue-fg: #1d4ed8;
+  --blue-soft: #eff6ff;
+  --blue-border: #bfdbfe;
+
+  --orange: #ea580c;
+  --orange-fg: #c2410c;
+  --orange-soft: #fff7ed;
+  --orange-border: #fed7aa;
+
+  --red: #dc2626;
+  --red-fg: #b91c1c;
+  --red-soft: #fef2f2;
+  --red-border: #fecaca;
+  --red-solid: #dc2626;
+  --red-solid-hover: #b91c1c;
+  --red-solid-fg: #ffffff;
+
+  --green: #16a34a;
+  --green-fg: #15803d;
+  --green-soft: #f0fdf4;
+  --green-border: #bbf7d0;
+
+  --yellow: #ca8a04;
+  --yellow-fg: #a16207;
+  --yellow-soft: #fefce8;
+  --yellow-border: #fde68a;
+
+  --violet: #7c3aed;
+  --violet-fg: #6d28d9;
+  --violet-soft: #f5f3ff;
+  --violet-border: #ddd6fe;
+
+  /* ── Chart palette (19 colors, warm-shifted & desaturated) ── */
+  --chart-1: #5d83bb;
+  --chart-2: #549770;
+  --chart-3: #cc7344;
+  --chart-4: #8974b3;
+  --chart-5: #4d9088;
+  --chart-6: #c89248;
+  --chart-7: #b8758a;
+  --chart-8: #7d9a48;
+  --chart-9: #7373b3;
+  --chart-10: #5e93b8;
+  --chart-11: #9c77ab;
+  --chart-12: #b56874;
+  --chart-13: #c8585a;
+  --chart-14: #4d8fa8;
+  --chart-15: #5d9a5d;
+  --chart-16: #847a7e;
+  --chart-17: #bba348;
+  --chart-18: #787e85;
+  --chart-19: #a96fa0;
+
+  /* Heatmap ramp: transparent → accent */
+  --heat-0: rgba(0, 0, 0, 0.04);
+  --heat-1: rgba(37, 36, 42, 0.1);
+  --heat-2: rgba(37, 36, 42, 0.24);
+  --heat-3: rgba(37, 36, 42, 0.42);
+  --heat-4: rgba(37, 36, 42, 0.62);
+  --heat-5: rgba(37, 36, 42, 0.84);
+
+  /* ── Radius scale ────────────────────────────────────────── */
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 24px;
+  --radius-2xl: 32px;
+
+  /* ── Elevation ───────────────────────────────────────────── */
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 4px 12px rgba(28, 24, 35, 0.06);
+  --shadow-pop: 0 20px 45px rgba(28, 24, 35, 0.1);
+  --shadow-dialog: 0 28px 80px rgba(28, 24, 35, 0.14);
+
+  /* ── Typography ──────────────────────────────────────────── */
+  /* Font files are fetched at runtime (see metadata.links in app/layout.tsx);
+     every family lists a system fallback so the UI stays usable offline. */
+  --font-ui: "Inter", "Noto Sans SC", ui-sans-serif, system-ui, "PingFang SC",
+    "Microsoft YaHei", sans-serif;
+  --font-heading: "Plus Jakarta Sans", "Noto Sans SC", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --font-code: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
+
+  --text-xs: 12px;
+  --text-sm: 13px;
+  --text-base: 15px;
+  --text-lg: 18px;
+  --text-xl: 20px;
+  --text-2xl: 24px;
+  --text-3xl: 28px;
+  --text-4xl: 32px;
+  --text-5xl: 40px;
+
+  --leading-tight: 1.1;
+  --leading-snug: 1.3;
+  --leading-normal: 1.5;
+
+  --tracking-tight: -0.02em;
+
+  /* ── Motion ──────────────────────────────────────────────── */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  color-scheme: light;
+}
+
+.dark {
+  --background: #101010;
+  --surface: #181818;
+  --sidebar: #181818;
+  --muted: rgba(255, 255, 255, 0.06);
+
+  --foreground: #f5f5f5;
+  --foreground-muted: #a3a3a3;
+  --foreground-subtle: #737373;
+  --foreground-faint: #6a6570;
+  --foreground-on-accent: #111111;
+
+  --border: rgba(255, 255, 255, 0.1);
+  --border-strong: rgba(255, 255, 255, 0.25);
+  --ring: rgba(255, 255, 255, 0.3);
+
+  --hover-bg: rgba(255, 255, 255, 0.06);
+  --hover-bg-strong: rgba(255, 255, 255, 0.1);
+  --overlay: rgba(0, 0, 0, 0.55);
+
+  --accent: #f5f5f5;
+  --accent-hover: #ffffff;
+  --accent-fg: #111111;
+  --accent-muted: rgba(245, 245, 245, 0.1);
+
+  --blue: #93c5fd;
+  --blue-fg: #60a5fa;
+  --blue-soft: rgba(59, 130, 246, 0.12);
+  --blue-border: rgba(96, 165, 250, 0.45);
+
+  --orange: #fdba74;
+  --orange-fg: #fb923c;
+  --orange-soft: rgba(249, 115, 22, 0.12);
+  --orange-border: rgba(251, 146, 60, 0.45);
+
+  --red: #fca5a5;
+  --red-fg: #f87171;
+  --red-soft: rgba(239, 68, 68, 0.12);
+  --red-border: rgba(248, 113, 113, 0.45);
+  --red-solid: #dc2626;
+  --red-solid-hover: #b91c1c;
+  --red-solid-fg: #ffffff;
+
+  --green: #86efac;
+  --green-fg: #4ade80;
+  --green-soft: rgba(34, 197, 94, 0.16);
+  --green-border: rgba(74, 222, 128, 0.45);
+
+  --yellow: #fde047;
+  --yellow-fg: #facc15;
+  --yellow-soft: rgba(234, 179, 8, 0.14);
+  --yellow-border: rgba(250, 204, 21, 0.45);
+
+  --violet: #c4b5fd;
+  --violet-fg: #a78bfa;
+  --violet-soft: rgba(139, 92, 246, 0.16);
+  --violet-border: rgba(167, 139, 250, 0.45);
+
+  --chart-1: #6f92cc;
+  --chart-2: #5fae84;
+  --chart-3: #dd8a5a;
+  --chart-4: #9d88c6;
+  --chart-5: #5fa89f;
+  --chart-6: #daa45c;
+  --chart-7: #cc8b9f;
+  --chart-8: #93b25e;
+  --chart-9: #8b8bcc;
+  --chart-10: #78a8cc;
+  --chart-11: #b48fc2;
+  --chart-12: #cc8090;
+  --chart-13: #db6f71;
+  --chart-14: #65a7c2;
+  --chart-15: #74b374;
+  --chart-16: #9d9498;
+  --chart-17: #d0b964;
+  --chart-18: #949aa1;
+  --chart-19: #c086b6;
+
+  --heat-0: rgba(255, 255, 255, 0.05);
+  --heat-1: rgba(245, 245, 245, 0.12);
+  --heat-2: rgba(245, 245, 245, 0.26);
+  --heat-3: rgba(245, 245, 245, 0.44);
+  --heat-4: rgba(245, 245, 245, 0.64);
+  --heat-5: rgba(245, 245, 245, 0.88);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --shadow-pop: 0 20px 45px rgba(0, 0, 0, 0.45);
+  --shadow-dialog: 0 28px 80px rgba(0, 0, 0, 0.55);
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-sidebar: var(--sidebar);
+  --color-muted: var(--muted);
+
+  --color-foreground: var(--foreground);
+  --color-foreground-muted: var(--foreground-muted);
+  --color-foreground-subtle: var(--foreground-subtle);
+  --color-foreground-faint: var(--foreground-faint);
+  --color-foreground-on-accent: var(--foreground-on-accent);
+
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-ring: var(--ring);
+  --color-hover: var(--hover-bg);
+  --color-hover-strong: var(--hover-bg-strong);
+  --color-overlay: var(--overlay);
+
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-accent-fg: var(--accent-fg);
+  --color-accent-muted: var(--accent-muted);
+
+  --color-blue: var(--blue);
+  --color-blue-fg: var(--blue-fg);
+  --color-blue-soft: var(--blue-soft);
+  --color-blue-border: var(--blue-border);
+  --color-orange: var(--orange);
+  --color-orange-fg: var(--orange-fg);
+  --color-orange-soft: var(--orange-soft);
+  --color-orange-border: var(--orange-border);
+  --color-red: var(--red);
+  --color-red-fg: var(--red-fg);
+  --color-red-soft: var(--red-soft);
+  --color-red-border: var(--red-border);
+  --color-red-solid: var(--red-solid);
+  --color-red-solid-hover: var(--red-solid-hover);
+  --color-green: var(--green);
+  --color-green-fg: var(--green-fg);
+  --color-green-soft: var(--green-soft);
+  --color-green-border: var(--green-border);
+  --color-yellow: var(--yellow);
+  --color-yellow-fg: var(--yellow-fg);
+  --color-yellow-soft: var(--yellow-soft);
+  --color-yellow-border: var(--yellow-border);
+  --color-violet: var(--violet);
+  --color-violet-fg: var(--violet-fg);
+  --color-violet-soft: var(--violet-soft);
+  --color-violet-border: var(--violet-border);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+  --color-chart-6: var(--chart-6);
+  --color-chart-7: var(--chart-7);
+  --color-chart-8: var(--chart-8);
+  --color-chart-9: var(--chart-9);
+  --color-chart-10: var(--chart-10);
+  --color-chart-11: var(--chart-11);
+  --color-chart-12: var(--chart-12);
+  --color-chart-13: var(--chart-13);
+  --color-chart-14: var(--chart-14);
+  --color-chart-15: var(--chart-15);
+  --color-chart-16: var(--chart-16);
+  --color-chart-17: var(--chart-17);
+  --color-chart-18: var(--chart-18);
+  --color-chart-19: var(--chart-19);
+
+  --color-heat-0: var(--heat-0);
+  --color-heat-1: var(--heat-1);
+  --color-heat-2: var(--heat-2);
+  --color-heat-3: var(--heat-3);
+  --color-heat-4: var(--heat-4);
+  --color-heat-5: var(--heat-5);
+
+  --font-sans: var(--font-ui);
+  --font-display: var(--font-heading);
+  --font-mono: var(--font-code);
+
+  --text-xs: var(--text-xs);
+  --text-xs--line-height: var(--leading-normal);
+  --text-sm: var(--text-sm);
+  --text-sm--line-height: var(--leading-normal);
+  --text-base: var(--text-base);
+  --text-base--line-height: var(--leading-normal);
+  --text-lg: var(--text-lg);
+  --text-lg--line-height: var(--leading-snug);
+  --text-xl: var(--text-xl);
+  --text-xl--line-height: var(--leading-snug);
+  --text-2xl: var(--text-2xl);
+  --text-2xl--line-height: var(--leading-tight);
+  --text-3xl: var(--text-3xl);
+  --text-3xl--line-height: var(--leading-tight);
+  --text-4xl: var(--text-4xl);
+  --text-4xl--line-height: var(--leading-tight);
+  --text-5xl: var(--text-5xl);
+  --text-5xl--line-height: var(--leading-tight);
+
+  --tracking-tight: -0.02em;
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+  --radius-2xl: var(--radius-2xl);
+
+  --shadow-xs: var(--shadow-xs);
+  --shadow-sm: var(--shadow-sm);
+  --shadow-md: var(--shadow-md);
+  --shadow-pop: var(--shadow-pop);
+  --shadow-dialog: var(--shadow-dialog);
+
+  --animate-fade-in: fade-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fade-out: fade-out 0.18s cubic-bezier(0.4, 0, 1, 1);
+  --animate-fade-slide-in: fade-slide-in 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-in-left: slide-in-left 0.26s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-out-left: slide-out-left 0.2s cubic-bezier(0.4, 0, 1, 1);
+  --animate-pulse-soft: pulse-soft 2s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+}
+
+@layer base {
+  * {
+    border-color: var(--border);
+  }
+
+  html {
+    background: var(--background);
+    -webkit-text-size-adjust: 100%;
+  }
+
+  body {
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-ui);
+    font-size: var(--text-base);
+    line-height: var(--leading-normal);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    transition: background-color 0.2s var(--ease-out), color 0.2s var(--ease-out);
+  }
+
+  ::selection {
+    background: var(--accent);
+    color: var(--accent-fg);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  ::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: var(--hover-bg-strong);
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--foreground-faint);
+    background-clip: content-box;
+  }
+
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--hover-bg-strong) transparent;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes fade-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* The drawer sits flush against the left edge, so it enters from off-screen rather
+   than from a few pixels away — the panel reads as sliding out of the bezel. */
+@keyframes slide-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Mirror of the entrance: same path, faster and ease-in, so closing reads as a
+   retreat rather than a reverse playback. */
+@keyframes slide-out-left {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-100%);
+  }
+}
+
+@keyframes pulse-soft {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
