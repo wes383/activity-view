@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import * as SelectPrimitive from "@radix-ui/react-select";
-import { Check, ChevronDown, ChevronUp } from "lucide-react";
+import { Check, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const TRIGGER_SIZES = {
@@ -34,10 +34,13 @@ export function Select({
       <SelectPrimitive.Trigger
         aria-label={ariaLabel}
         className={cn(
-          // `focus-visible`, not `focus`: Radix hands focus back to the trigger after
-          // a selection, so a plain `focus:` border would darken the button every
-          // time you pick an option — mouse users read that as a stray outline.
-          "flex w-full cursor-pointer items-center justify-between border border-border bg-surface text-foreground placeholder:text-foreground-subtle transition-colors duration-150 focus:outline-none focus-visible:border-border-strong disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 [&>span]:text-left",
+          // No focus ring and no open-state highlight: the border stays `--border` for
+          // the trigger's whole life. Radix always returns focus to the trigger when the
+          // menu closes, and Chromium can classify that programmatic focus as
+          // `:focus-visible`, so any focus-driven border left a stray ring behind after
+          // a pick. `data-state` fixed that, but a border that darkens on open still
+          // reads as the button gaining an outline — the open menu is signal enough.
+          "flex w-full cursor-pointer items-center justify-between border border-border bg-surface text-foreground placeholder:text-foreground-subtle transition-colors duration-150 focus:outline-none disabled:cursor-not-allowed disabled:opacity-50 [&>span]:line-clamp-1 [&>span]:text-left",
           TRIGGER_SIZES[size],
           className
         )}
@@ -58,11 +61,9 @@ export function Select({
             "!z-[100]"
           )}
         >
-          <SelectPrimitive.ScrollUpButton
-            className="flex cursor-default items-center justify-center py-1 text-foreground-subtle"
-          >
-            <ChevronUp className="h-4 w-4" aria-hidden="true" />
-          </SelectPrimitive.ScrollUpButton>
+          {/* No `ScrollUpButton` / `ScrollDownButton`: the viewport already gets a
+              native scrollbar when the list overflows, and showing both the arrows and
+              the bar reads as two competing affordances. */}
           <SelectPrimitive.Viewport className="w-full p-1">
             {options.map((option) => (
               <SelectPrimitive.Item
@@ -82,11 +83,6 @@ export function Select({
               </SelectPrimitive.Item>
             ))}
           </SelectPrimitive.Viewport>
-          <SelectPrimitive.ScrollDownButton
-            className="flex cursor-default items-center justify-center py-1 text-foreground-subtle"
-          >
-            <ChevronDown className="h-4 w-4" aria-hidden="true" />
-          </SelectPrimitive.ScrollDownButton>
         </SelectPrimitive.Content>
       </SelectPrimitive.Portal>
     </SelectPrimitive.Root>

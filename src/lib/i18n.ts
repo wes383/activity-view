@@ -219,7 +219,7 @@ const zh = {
     version: "版本",
     watchers: "监测器",
     lastEvent: "最近事件",
-    savedAt: "设置已保存到 data/settings.json",
+    savedAt: "设置已保存在应用数据目录",
     notPersisted: "尚未保存过设置，当前使用默认值。",
     moveUp: "上移",
     moveDown: "下移",
@@ -251,27 +251,27 @@ const zh = {
     sections: [
       {
         title: "数据来源",
-        body: "全部活动数据来自你自己运行的 ActivityWatch 服务，默认地址 http://127.0.0.1:5600。本站只通过它的 REST 接口读取记录，不会写入、修改或删除任何原始事件。",
+        body: "全部活动数据来自你自己运行的 ActivityWatch 服务，默认地址 http://127.0.0.1:5600。本应用只通过它的 REST 接口读取记录，不会写入、修改或删除任何原始事件。",
       },
       {
         title: "本地计算",
-        body: "区间裁剪、离开时间（AFK）扣除、分类规则匹配、生产力分数与各类图表，都在本机的服务端进程内完成，结果只用于当前页面的展示，不会被上报。",
+        body: "区间裁剪、离开时间（AFK）扣除、分类规则匹配、生产力分数与各类图表，全部在应用自己的窗口进程里用纯 TypeScript 算出，结果只用于当前界面的展示，不会离开这台机器。",
       },
       {
         title: "存储位置",
-        body: "分类规则与服务器地址等设置写在项目目录下的 data/settings.json；主题、语言和选中的时间范围保存在浏览器的 localStorage。没有账号体系，也不使用任何数据库。",
+        body: "分类规则、服务器地址与各项阈值写在应用数据目录下的 settings.json，是普通 JSON，可以直接打开查看或手工编辑；主题、语言和选中的时间范围由 WebView 存在应用自己的本地存储里。没有账号体系，不使用数据库，也不会上传到任何服务器。",
       },
       {
         title: "外部请求",
-        body: "除了本机的 ActivityWatch 服务，页面只会向 Google Fonts 请求界面字体，这是唯一的外部请求，且不会携带任何活动数据。",
+        body: "除了你自己运行的 ActivityWatch 服务，应用不会发起任何外部请求：界面字体随安装包一起打包，图标与样式全部来自本地文件。",
       },
       {
         title: "数据范围",
-        body: "ActivityWatch 本身记录窗口标题、应用名与浏览器历史等内容，这些原始信息会原样参与统计。本站不做二次脱敏，请先在 ActivityWatch 一侧配置排除规则（例如隐私窗口、敏感应用）。",
+        body: "ActivityWatch 本身记录窗口标题、应用名与浏览器历史等内容，这些原始信息会原样参与统计。本应用不做二次脱敏，请先在 ActivityWatch 一侧配置排除规则（例如隐私窗口、敏感应用）。",
       },
       {
         title: "清除与接管",
-        body: "把设置里的服务器地址指向其他机器，数据就会从那台机器读取，请自行确认其可信。删除 data/settings.json 并清空浏览器站点数据，即可移除本站留下的全部信息。",
+        body: "把设置里的服务器地址指向其他机器，数据就会从那台机器读取，请自行确认其可信。清空应用数据目录（设置文件与 WebView 的本地存储都在里面），本应用留下的信息就全部清除了。",
       },
     ],
   },
@@ -497,7 +497,7 @@ const en: Dict = {
     version: "Version",
     watchers: "Watchers",
     lastEvent: "Latest event",
-    savedAt: "Settings are stored in data/settings.json",
+    savedAt: "Settings are saved in the app data directory",
     notPersisted: "No settings saved yet; defaults are in use.",
     moveUp: "Move up",
     moveDown: "Move down",
@@ -529,27 +529,27 @@ const en: Dict = {
     sections: [
       {
         title: "Data source",
-        body: "Everything comes from the ActivityWatch server you run yourself, by default http://127.0.0.1:5600. This site only reads through its REST API; it never writes, edits or deletes raw events.",
+        body: "Everything comes from the ActivityWatch server you run yourself, by default http://127.0.0.1:5600. The app only reads through its REST API; it never writes, edits or deletes raw events.",
       },
       {
         title: "Computed locally",
-        body: "Range clipping, away-time subtraction, category matching, the productivity score and every chart are calculated inside a local process. The results are only used to paint the page you are looking at.",
+        body: "Range clipping, away-time subtraction, category matching, the productivity score and every chart are calculated with plain TypeScript inside the app's own window process. The results are only used to paint what you are looking at and never leave the machine.",
       },
       {
         title: "What is stored",
-        body: "Categories and the server address live in data/settings.json inside this project; theme, language and the selected range live in browser localStorage. There are no accounts and no database.",
+        body: "Categories, the server address and the tuning thresholds live in settings.json inside the app data directory — plain JSON you can open or hand-edit. Theme, language and the selected range are kept by the WebView in the app's own local storage. There are no accounts, no database, and nothing is ever uploaded.",
       },
       {
         title: "Outbound requests",
-        body: "Apart from your local ActivityWatch server, the page fetches its UI fonts from Google Fonts. That is the only external request and it carries no activity data.",
+        body: "Apart from the ActivityWatch server you run yourself, the app makes no outbound requests: the UI font ships inside the installer, and every icon and style is a local file.",
       },
       {
         title: "What ActivityWatch records",
-        body: "Window titles, app names and browser history are collected by ActivityWatch itself and appear here as they are. This site adds no redaction, so configure exclusions (private windows, sensitive apps) on the ActivityWatch side.",
+        body: "Window titles, app names and browser history are collected by ActivityWatch itself and appear here as they are. The app adds no redaction, so configure exclusions (private windows, sensitive apps) on the ActivityWatch side.",
       },
       {
         title: "Taking back control",
-        body: "Point the server address in Settings at another machine and the data is read from there, so judge its trustworthiness yourself. Deleting data/settings.json plus the browser's site data removes everything this page has left behind.",
+        body: "Point the server address in Settings at another machine and the data is read from there, so judge its trustworthiness yourself. Clear the app data directory (the settings file and the WebView's local storage both live there), and nothing this app stored is left behind.",
       },
     ],
   },

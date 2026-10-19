@@ -1,6 +1,6 @@
 [package]
 name = "activity-view"
-version = "0.1.0"
+version = "0.1.1"
 description = "Local ActivityWatch analytics dashboard"
 authors = ["Wes Wei"]
 license = "MIT"
@@ -22,6 +22,13 @@ tauri-plugin-http = "2"
 tauri-plugin-store = "2"
 serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+
+# WebView2 keeps a browser's keyboard (F5, Ctrl+R, Ctrl+P, Ctrl+F, zoom, devtools)
+# behind a settings object that Tauri does not surface. Pinned to the versions Tauri
+# already resolves so the COM types stay identical instead of duplicated.
+[target.'cfg(windows)'.dependencies]
+webview2-com = "0.39"
+windows-core = "0.62"
 
 [profile.release]
 codegen-units = 1
