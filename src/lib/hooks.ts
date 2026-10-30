@@ -51,9 +51,11 @@ export function useStatus<T>(enabled = true) {
 /** Clears the event memo and re-requests every mounted query. */
 export async function refreshAll() {
   await apiFetch("/api/refresh", { method: "POST" }).catch(() => undefined);
-  // The second argument is the optimistic payload, so it must stay undefined or
-  // every cache entry gets replaced by the options object.
-  await globalMutate(() => true, undefined, { revalidate: true });
+  // No data argument: passing one — even `undefined` — overwrites every cache
+  // entry before the refetch lands, which unmounts data-backed pages and makes
+  // the watcher indicator drop to "disconnected". Filter-only mutate revalidates
+  // in place and keeps the current data on screen.
+  await globalMutate(() => true);
 }
 
 /** False during SSR and the hydration render, true afterwards. */

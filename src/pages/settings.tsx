@@ -192,8 +192,10 @@ function SettingsEditor({
       const body = (await res.json().catch(() => null)) as { settings?: Settings; error?: string } | null;
       if (!res.ok) throw new Error(body?.error ?? `HTTP ${res.status}`);
       // The route normalises what it stored; mirror that back unless the user
-      // has already moved on to another edit.
-      if (body?.settings && current.current === payload) {
+      // has already moved on to another edit. A blank rule row lives only in the
+      // UI — the sanitizer drops it — so adopting the response would erase the
+      // row the user is still filling in.
+      if (body?.settings && current.current === payload && !hasBlankRule(payload)) {
         current.current = body.settings;
         setSettings(body.settings);
       }
@@ -697,12 +699,21 @@ function CategoryEditor({
         size="xs"
         variant="ghost"
         className="mt-2 self-start"
-        onClick={() => onChange({ conditions: [...category.conditions, { field: "app", pattern: "", regex: false }] })}
+        onClick={() =>
+          onDraft({ conditions: [...category.conditions, { field: "app", pattern: "", regex: false }] })
+        }
       >
         <Plus className="h-3.5 w-3.5" aria-hidden="true" />
         {d.settings.addRule}
       </Button>
     </div>
+  );
+}
+
+/** A rule with no pattern is still being authored, not something to store. */
+function hasBlankRule(settings: Settings): boolean {
+  return settings.categories.some((category) =>
+    category.conditions.some((condition) => condition.pattern.length === 0)
   );
 }
 
